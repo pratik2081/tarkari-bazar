@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Tarkari Bazar">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>tarkari bazar - Order Tracking</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg width='192' height='192' viewBox='0 0 192 192' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='192' height='192' fill='%23ff6b6b' rx='24'/%3E%3Ctext x='96' y='110' font-family='Arial, sans-serif' font-size='80' font-weight='bold' text-anchor='middle' fill='white'%3E🥕%3C/text%3E%3C/svg%3E">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><h2><i class="fas fa-shopping-bag"></i> tarkari bazar</h2></a>
+            </div>
+            <nav class="nav">
+                <a href="index.html">Shop</a>
+                <a href="seller.html">Sell</a>
+                <a href="tracking.html" class="active">Track Order</a>
+            </nav>
+            <div class="user-actions">
+                <button id="loginBtn">Login</button>
+                <button id="registerBtn" style="display: none;">Register</button>
+                <span id="userInfo" style="display: none;"></span>
+                <button id="logoutBtn" style="display: none;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <section class="tracking-section">
+            <div class="container">
+                <h2><i class="fas fa-map-marker-alt"></i> Live Delivery Tracking</h2>
+                <div class="tracking-info">
+                    <p><i class="fas fa-info-circle"></i> Try these sample Order IDs: <strong>1001</strong>, <strong>1002</strong>, <strong>1003</strong></p>
+                </div>
+                <div class="order-lookup">
+                    <input type="text" placeholder="Enter Order ID (e.g., 1001)" id="orderIdInput">
+                    <button id="lookupBtn">Track Order</button>
+                </div>
+                <div class="tracking-container" id="trackingContainer" style="display: none;">
+                    <div class="map-container">
+                        <div id="map" style="height: 400px; width: 100%; border-radius: 10px;"></div>
+                    </div>
+                    <div class="tracking-details">
+                        <div class="order-info">
+                            <h3 id="orderNumber">Order #DP12345</h3>
+                            <p>Status: <span id="orderStatus">Rider Assigned</span></p>
+                            <p>ETA: <span id="eta">15 mins</span></p>
+                        </div>
+                        <div class="rider-info">
+                            <h4><i class="fas fa-user"></i> Driver Details</h4>
+                            <div class="rider-profile">
+                                <img src="https://via.placeholder.com/100x100?text=Driver" alt="Driver" class="rider-avatar" id="riderAvatar">
+                                <div class="rider-details">
+                                    <h5 id="riderName">Driver Name</h5>
+                                    <div class="rider-stats">
+                                        <span class="rating" id="riderRating"><i class="fas fa-star"></i> 4.8</span>
+                                        <span class="experience" id="riderExperience">3 years</span>
+                                    </div>
+                                    <p class="deliveries" id="riderDeliveries"><i class="fas fa-box"></i> 1,250 deliveries</p>
+                                </div>
+                            </div>
+                            <div class="rider-contact">
+                                <p><i class="fas fa-phone"></i> <a href="tel:+923001234567" id="riderPhone">+92 300 1234567</a></p>
+                                <button class="call-btn" id="callRider"><i class="fas fa-phone"></i> Call Driver</button>
+                            </div>
+                            <div class="vehicle-info">
+                                <h6><i class="fas fa-motorcycle"></i> Vehicle Details</h6>
+                                <p id="riderVehicle">Honda CD70 Bike</p>
+                                <p id="vehicleNumber">RWP-1234</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async defer></script>
+    <script src="tracking.js"></script>
+    <script>
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeLoginModal">&times;</span>
+            <h2 id="modalTitle">Login</h2>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group" id="nameGroup" style="display: none;">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name">
+                </div>
+                <div class="form-group" id="phoneGroup" style="display: none;">
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone">
+                </div>
+                <div class="form-group" id="roleGroup" style="display: none;">
+                    <label for="role">Role:</label>
+                    <select id="role">
+                        <option value="customer">Customer</option>
+                        <option value="seller">Seller</option>
+                        <option value="driver">Driver</option>
+                    </select>
+                </div>
+                <div class="form-group" id="addressGroup" style="display: none;">
+                    <label for="address">Address:</label>
+                    <textarea id="address" rows="2"></textarea>
+                </div>
+                <button type="submit" id="authSubmitBtn">Login</button>
+            </form>
+            <p id="authToggle">Don't have an account? <a href="#" id="toggleAuthMode">Register here</a></p>
+            <div id="authMessage"></div>
+        </div>
+    </div>
+</body>
+</html>

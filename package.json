@@ -1,0 +1,25 @@
+{
+  "name": "tarkari-bazar",
+  "version": "1.0.0",
+  "description": "Vegetable market e-commerce platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^4.22.1"
+  },
+  "optionalDependencies": {
+    "compression": "^1.7.4",
+    "helmet": "^7.0.0"
+  },
+  "keywords": [
+    "ecommerce",
+    "vegetables",
+    "delivery"
+  ],
+  "author": "",
+  "license": "ISC"
+}
